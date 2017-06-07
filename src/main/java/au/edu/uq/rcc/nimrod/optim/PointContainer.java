@@ -24,7 +24,7 @@
 package au.edu.uq.rcc.nimrod.optim;
 
 /**
- * A wrapper around {@link #OptimPoint} that supports multiple objectives.
+ * A wrapper around {@link OptimPoint} that supports multiple objectives.
  */
 public class PointContainer {
 

@@ -1,1 +1,8 @@
 **/target/
+/.nb-gradle/
+/build/
+/.gradle/
+/.vscode/
+/.project
+/.settings/
+/.classpath
