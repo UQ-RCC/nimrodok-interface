@@ -1,13 +1,38 @@
+import org.gradle.plugins.signing.Sign
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+
+	dependencies {
+		classpath group: 'org.ajoberstar', name: 'grgit', version: '1.7.2'
+	}
+}
+
 apply plugin: 'base'
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'au.edu.uq.rcc'
-version = '1.0'
+// version is now set by looking at git
+// version = '1.0'
 
 sourceCompatibility = '1.5'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+ext {
+	def git = null
+	try {
+		git = org.ajoberstar.grgit.Grgit.open(dir: projectDir)
+		project.version = git.describe()
+		println "Found git repository, current HEAD: ${git.head().id}, version = ${project.version}"
+	} catch(org.eclipse.jgit.errors.RepositoryNotFoundException e) {
+		println "Not building from a git repository..."
+		project.version = "unknown"
+	}
+}
 
 repositories {
 	mavenCentral()
@@ -33,9 +58,18 @@ artifacts {
 	archives jar
 }
 
+if(project.hasProperty('sign')) {
+	gradle.taskGraph.whenReady { taskGraph ->
+		if(taskGraph.allTasks.any { it instanceof Sign }) {
+			allprojects { ext."signing.keyId" = System.getenv('GPG_KEY_ID') }
+			allprojects { ext."signing.secretKeyRingFile" = "${System.getenv('HOME')}/.gnupg/secring.gpg" }
+			allprojects { ext."signing.password" = System.getenv('GPG_PASSPHRASE') }
+		}
+	}
 
-signing {
-	sign configurations.archives
+	signing {
+		sign configurations.archives
+	}
 }
 
 uploadArchives {
@@ -44,7 +78,7 @@ uploadArchives {
 			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
  
 			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-				authentication(userName: sonatypeUsername, password: sonatypePassword)
+				authentication(userName: System.getenv('OSSRH_JIRA_USERNAME'), password: System.getenv('OSSRH_JIRA_PASSWORD'))
 			}
 
 			pom.project {
