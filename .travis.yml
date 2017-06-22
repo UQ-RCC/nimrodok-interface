@@ -11,10 +11,15 @@ env:
   - secure: JFaiqQcFMZ97lJrSeNYzwvj0zlKnQdFIWa6R6Hvv3pSlpCsFR3IExR5tUeOgnRbRJF0J3AIYvdd0aDoBvF42uckxj+BkT7VhBIttXLyn57iZ/kb88X0sSRFmYqw60y6Bgjwz7M2aPC81CaTpDiDPlvZKerqdlesNP8/0IoDA3yeta2QMxLl4J0mm2EFyIW+CJhK/qQMnxMpykt7knb47gYhfC/nSfSokFFu/NN7tp6T/HBzH0Bi4S1sRZoz/aBYbvbx52Zgfdz1cZAyMOn6ptFaZb/lvMfRWwc0fpHwleLzCCFAvrUv58U9ptxnzflSaGD/5j2C7EOblhDp4V0KD4SzKuWltRShVWBAl8JkbNAkSgQpsGkJJx32Abwn5wELwwW78TtOu6g0eCkLn/5vERsqMhg08X69owIiNpUewmhYZDfwQplkw89SEuotz8ZzBN1/4oJC4nX9pMXPGfSMYuG5sdE2+Zt1dHbHP6rjr0zQAvZWa8ekO/dEm44gddlF/GsISbs7qUXh9pVxKQONLWx8numNPN64eHy/dctZkCPUoCGyeKgnx+EHV5n+qfELETFAS6FyhkdqhyaO6kgwLV8d/wkyw32EV/z12KwulRz67RC3Hk7S+QlM6/3TkMO9KLxMoXmGTJOvmBlbK4rBcFow48apJGagxFlXvsa5uWqM=
   - # GPG_PASSPHRASE
   - secure: ZyY7Y7DKUjAj1QzgjHh+O6jLCQfyVKQzrv6WdALewmGDb4w+Yge+IBp+StCFBSJU4F60giEtcVcdExBi4VDAQDqnubbD0scOuRgmkQs0ZSX1ydXiHemNbq5cKuaiVK1K5/ke+luowgRx6lU6uLL9gFA+Dfdlaktd+U5kCMm3iIWJW3WU8IFYAMSrt7yq7h/5cRJocD0Z7TTzM0wCmc8P9jksg2j0FCXtHszcWIg9Cky9JNdtOfG2nH9NY/9oBpqEQ5xa6GhWNwsNSjvzM231vXqDA+VYVpvT2HJ6SCGW/vvRaUn5GgfX8iqH4yRo5IbIJHJpwFUKPdadNM8l9oS5X23SH7QpEMr0FXrm4i2feHdTc4rapsu4CxKDrP2CK6F539skdJKkjj0BYLLH6f0N6o3B0MXcibdcJBH6uw1bjJxTvH9552qBItf48G+f3X4CIYQ0JH9AF7zWk8kn2l1jhd2clmPfmrjeo/jj7r1VuYoWIsF6YmCnCWWzP64JnyRldOPjaHlHCCHSxrQrlw5l0eHuvyikPfdb/+5xBQrrq7iiLHngcujZs+O1FHc8mN0dYu8GXTSE5nNC7w1scdp9DJ/k9zDF5QbbB5fVohxuQ5e5thlh2NatsLCF8Xd2PuBF0kVh//yjjrFaUiSoGhf4lNFIOpABLNZyhGkhywqjiOE=
-script: gradle clean check test
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
+script: gradle check test
 after_success:
   - chmod +x travis-success.sh
   - ./travis-success.sh
 cache:
   directories:
-    - ~/.m2/repository
+    - $HOME/.m2/repository
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
